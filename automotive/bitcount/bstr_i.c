@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
       while (--argc)
       {
             x = bstr_i(arg = *++argv);
-            printf("Binary %s = %d = %04Xh\n", arg, x, x);
+            //printf("Binary %s = %d = %04Xh\n", arg, x, x);
       }
       return EXIT_SUCCESS;
 }

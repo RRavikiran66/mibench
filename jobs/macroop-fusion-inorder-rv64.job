@@ -1,0 +1,4 @@
+#!/bin/bash
+#SBATCH --job-name=macroop-fusion-inorder-rv64
+#SBATCH --output=macroop-fusion-inorder-rv64.log
+make run_automotive FFLAG=macroop-fusion-inorder-rv64

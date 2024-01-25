@@ -2,7 +2,7 @@
 #include <string.h>
 #include "brhist.h"
 #include "util.h"
-#include <termcap.h>
+#include "termcap.h"
 
 
 #define BRHIST_BARMAX 50

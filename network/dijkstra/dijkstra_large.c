@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #define NUM_NODES                          100
 #define NONE                               9999
@@ -33,15 +34,15 @@ int iPrev, iNode;
 int i, iCost, iDist;
 
 
-void print_path (NODE *rgnNodes, int chNode)
-{
-  if (rgnNodes[chNode].iPrev != NONE)
-    {
-      print_path(rgnNodes, rgnNodes[chNode].iPrev);
-    }
-  printf (" %d", chNode);
-  fflush(stdout);
-}
+// void print_path (NODE *rgnNodes, int chNode)
+// {
+//   if (rgnNodes[chNode].iPrev != NONE)
+//     {
+//       print_path(rgnNodes, rgnNodes[chNode].iPrev);
+//     }
+//   printf (" %d", chNode);
+//   fflush(stdout);
+// }
 
 
 void enqueue (int iNode, int iDist, int iPrev)
@@ -51,7 +52,7 @@ void enqueue (int iNode, int iDist, int iPrev)
   
   if (!qNew) 
     {
-      fprintf(stderr, "Out of memory.\n");
+      //fprintf(stderr, "Out of memory.\n");
       exit(1);
     }
   qNew->iNode = iNode;
@@ -99,7 +100,7 @@ int dijkstra(int chStart, int chEnd)
 {
   
 
-  
+  #pragma clang loop unroll(full)
   for (ch = 0; ch < NUM_NODES; ch++)
     {
       rgnNodes[ch].iDist = NONE;
@@ -120,6 +121,7 @@ int dijkstra(int chStart, int chEnd)
      while (qcount() > 0)
 	{
 	  dequeue (&iNode, &iDist, &iPrev);
+    #pragma clang loop unroll(full)
 	  for (i = 0; i < NUM_NODES; i++)
 	    {
 	      if ((iCost = AdjMatrix[iNode][i]) != NONE)
@@ -135,10 +137,10 @@ int dijkstra(int chStart, int chEnd)
 	    }
 	}
       
-      printf("Shortest path is %d in cost. ", rgnNodes[chEnd].iDist);
-      printf("Path is: ");
-      print_path(rgnNodes, chEnd);
-      printf("\n");
+      // printf("Shortest path is %d in cost. ", rgnNodes[chEnd].iDist);
+      // printf("Path is: ");
+      //print_path(rgnNodes, chEnd);
+      //printf("\n");
     }
 }
 
@@ -155,7 +157,9 @@ int main(int argc, char *argv[]) {
   fp = fopen (argv[1],"r");
 
   /* make a fully connected matrix */
+  //// #pragma clang loop unroll(full)
   for (i=0;i<NUM_NODES;i++) {
+    //// #pragma clang loop unroll(full)
     for (j=0;j<NUM_NODES;j++) {
       /* make it more sparce */
       fscanf(fp,"%d",&k);
@@ -164,10 +168,14 @@ int main(int argc, char *argv[]) {
   }
 
   /* finds 10 shortest paths between nodes */
+  //// #pragma clang loop unroll(full)
+  __asm volatile("xor x0,x0,x0");
+  #pragma clang loop unroll(full)
   for (i=0,j=NUM_NODES/2;i<100;i++,j++) {
 			j=j%NUM_NODES;
       dijkstra(i,j);
   }
+  __asm volatile("xor x0,x0,x0");
   exit(0);
   
 

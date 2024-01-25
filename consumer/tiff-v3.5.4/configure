@@ -60,9 +60,9 @@ HTML=no					# install HTML documentation
 LIBGL=auto				# auto-enable build of SGI -lgl apps
 LIBIMAGE=auto				# auto-enable build of SGI -limage apps
 MACHDEPLIBS=				# machine-dependent libraries for apps
-: ${CC=}				# name of C compiler to use
-: ${CCOMPILER=}				# full pathname of C compiler
-: ${ENVOPTS=}				# CC opts for ANSI C compilation
+: ${CC=riscv64-unknown-linux-gnu-gcc}				# name of C compiler to use
+: ${CCOMPILER=/home/ssingh/riscv/riscv-gnu-toolchain/build/bin/riscv64-unknown-linux-gnu-gcc}				# full pathname of C compiler
+: ${ENVOPTS=-O3 -static}				# CC opts for ANSI C compilation
 : ${MAKE=make}				# make to use
 
 # screws up the test of `-f -'

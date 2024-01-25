@@ -11,8 +11,8 @@ ARCH = $(shell uname -m)
 
 # defaults:
 PGM = lame
-CC = gcc
-CC_OPTS =  -O
+CC = /home/ssingh/riscv/riscv-gnu-toolchain/build/bin/riscv64-unknown-linux-gnu-gcc -I/home/ssingh/mibench/consumer/lame/ncurses-5.5
+CC_OPTS =  -O3 -static 
 GTK = 
 GTKLIBS = 
 SNDLIB = -DLAMESNDFILE
@@ -78,7 +78,7 @@ ifeq ($(UNAME),Linux)
 
 
 # suggested for gcc-2.7.x
-   CC_OPTS =  -O3 -fomit-frame-pointer -funroll-loops -ffast-math  -finline-functions -Wall
+   CC_OPTS =  -O3 -fomit-frame-pointer -funroll-loops -ffast-math  -finline-functions -Wall -static
 #  CC_OPTS =  -O9 -fomit-frame-pointer -fno-strength-reduce -mpentiumpro -ffast-math -finline-functions -funroll-loops -Wall -malign-double -g -march=pentiumpro -mfancy-math-387 -pipe 
 
 #  for debugging:

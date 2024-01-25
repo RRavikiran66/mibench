@@ -161,7 +161,7 @@ DWORD crc32buf(char *buf, size_t len)
       register DWORD oldcrc32;
 
       oldcrc32 = 0xFFFFFFFF;
-
+      // #pragma clang loop unroll(full)
       for ( ; len; --len, ++buf)
       {
             oldcrc32 = UPDC32(*buf, oldcrc32);
@@ -177,11 +177,15 @@ main(int argc, char *argv[])
       DWORD crc;
       long charcnt;
       register errors = 0;
-
+      __asm volatile("xor x0,x0,x0");
+      //printf("ENTERING ROI");
+      #pragma clang loop unroll (enable)
       while(--argc > 0)
       {
             errors |= crc32file(*++argv, &crc, &charcnt);
             printf("%08lX %7ld %s\n", crc, charcnt, *argv);
       }
+      //printf("Exit ROI");
+       __asm volatile("xor x0,x0,x0");
       return(errors != 0);
 }

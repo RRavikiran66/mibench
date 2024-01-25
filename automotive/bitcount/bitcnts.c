@@ -52,10 +52,11 @@ int main(int argc, char *argv[])
   iterations=atoi(argv[1]);
   
   puts("Bit counter algorithm benchmark\n");
-  
+ // #pragma clang loop unroll(full)
+   __asm volatile("xor x0,x0,x0");
   for (i = 0; i < FUNCS; i++) {
     start = clock();
-    
+   // #pragma clang loop unroll(full)
     for (j = n = 0, seed = rand(); j < iterations; j++, seed += 13)
 	 n += pBitCntFunc[i](seed);
     
@@ -70,10 +71,11 @@ int main(int argc, char *argv[])
 	 cmaxix = i;
     }
     
-    printf("%-38s> Time: %7.3f sec.; Bits: %ld\n", text[i], ct, n);
+    //printf("%-38s> Time: %7.3f sec.; Bits: %ld\n", text[i], ct, n);
   }
-  printf("\nBest  > %s\n", text[cminix]);
-  printf("Worst > %s\n", text[cmaxix]);
+  __asm volatile("xor x0,x0,x0");
+  //printf("\nBest  > %s\n", text[cminix]);
+  //printf("Worst > %s\n", text[cmaxix]);
   return 0;
 }
 

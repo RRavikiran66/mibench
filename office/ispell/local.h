@@ -93,6 +93,8 @@
 #define MAN1DIR	"/usr/local/man/man1"
 #define MAN4DIR	"/usr/local/man/man4"
 
+#define CC "/home/ssingh/riscv/riscv-gnu-toolchain/build/bin/riscv64-unknown-linux-gnu-gcc"
+#define CFLAGS "-O3 -static -ansi"
 /*
  * Place any locally-required #include statements here
  */

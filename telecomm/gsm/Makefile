@@ -32,10 +32,10 @@ SASR	= -DSASR
 # CC		= /usr/lang/acc
 # CCFLAGS 	= -c -O
 
-CC		= gcc -ansi -pedantic -static
+#CC		= /home/ssingh/riscv/riscv-gnu-toolchain/build/bin/riscv64-unknown-linux-gnu-gcc -march=rv64g
 # ARM gcc doesn't like the -O1 here...
 #CCFLAGS 	= -c -O1 -DSTUPID_COMPILER -DNeedFunctionPrototypes=1
-CCFLAGS 	= -c -O3 -DSTUPID_COMPILER -DNeedFunctionPrototypes=1
+CCFLAGS 	= $(CFLAGS) -DSTUPID_COMPILER -DNeedFunctionPrototypes=1 
 
 LD 		= $(CC)
 

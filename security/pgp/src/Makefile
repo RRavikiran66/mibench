@@ -50,12 +50,12 @@
 # -DUSE_SELECT to use select() system call
 # -DUSE_NBIO   to use non-blocking read()
 
-CFLAGS= -O -DUNIX -DPORTABLE $(BYTEORDER)
+CFLAGS= -static -O3 -DUNIX -DPORTABLE $(BYTEORDER)
 
 # must set byte order for targets "sysv" and "bsd"
 # BYTEORDER= -DHIGHFIRST
 
-CC      = cc
+CC      = /home/ssingh/riscv/riscv-gnu-toolchain/build/bin/riscv64-unknown-linux-gnu-gcc
 LD      = cc            # Link command
 LDFLAGS = 
 CPP     = $(CC) -E

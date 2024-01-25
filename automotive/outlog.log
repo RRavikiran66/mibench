@@ -1,0 +1,16 @@
+ Trace created -> ../../../mibench/network/dijkstra//fft_reorderloads_p0-Trace.gz
+bbl loader
+Bit counter algorithm benchmark
+
+Total instructions executed: 311101968
+Total load instructions fused instructions executed: 13515195
+Total instructions in deptrace: 311101605
+Total loads executed: 27074891 (8.70291%)
+Total con loads fused: 4192806 (31.0229%)
+Total non con loads fused: 9322389 (68.9771%)
+Total stores executed: 24706 (0.00794146%)
+
+total_misaligned_load: 0
+total_misaligned_store: 0
+
+Log file is created -> ../../../mibench/network/dijkstra//fft_reorderloads-stats.log

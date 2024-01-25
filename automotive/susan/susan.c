@@ -445,7 +445,7 @@ int_to_uchar(r,in,size)
 int i,
     max_r=r[0],
     min_r=r[0];
-
+  //#pragma clang loop unroll(full)
   for (i=0; i<size; i++)
     {
       if ( r[i] > max_r )
@@ -457,7 +457,7 @@ int i,
   /*printf("min=%d max=%d\n",min_r,max_r);*/
 
   max_r-=min_r;
-
+  //#pragma clang loop unroll(full)
   for (i=0; i<size; i++)
     in[i] = (uchar)((int)((int)(r[i]-min_r)*255)/max_r);
 }
@@ -474,7 +474,7 @@ float temp;
 
   *bp=(unsigned char *)malloc(516);
   *bp=*bp+258;
-
+ // #pragma clang loop unroll(full)
   for(k=-256;k<257;k++)
   {
     temp=((float)k)/((float)thresh);
@@ -498,9 +498,10 @@ susan_principle(in,r,bp,max_no,x_size,y_size)
 int   i, j, n;
 uchar *p,*cp;
 
-  memset (r,0,x_size * y_size * sizeof(int));
-
+  __attribute__((always_inline)) memset (r,0,x_size * y_size * sizeof(int));
+  //#pragma clang loop unroll(full)
   for (i=3;i<y_size-3;i++)
+  //#pragma clang loop unroll(full)
     for (j=3;j<x_size-3;j++)
     {
       n=100;
@@ -575,8 +576,9 @@ uchar *p,*cp;
   memset (r,0,x_size * y_size * sizeof(int));
 
   max_no = 730; /* ho hum ;) */
-
+  //#pragma clang loop unroll(full)
   for (i=1;i<y_size-1;i++)
+    //#pragma clang loop unroll(full)
     for (j=1;j<x_size-1;j++)
     {
       n=100;
@@ -623,8 +625,9 @@ int p[8],k,l,tmp;
   p[5]=in[(i+1)*x_size+j-1];
   p[6]=in[(i+1)*x_size+j  ];
   p[7]=in[(i+1)*x_size+j+1];
-
+  //#pragma clang loop unroll(full)
   for(k=0; k<7; k++)
+    //#pragma clang loop unroll(full)
     for(l=0; l<(7-k); l++)
       if (p[l]>p[l+1])
       {
@@ -645,16 +648,16 @@ enlarge(in,tmp_image,x_size,y_size,border)
   int   *x_size, *y_size, border;
 {
 int   i, j;
-
+  //#pragma clang loop unroll(full)
   for(i=0; i<*y_size; i++)   /* copy *in into tmp_image */
-    memcpy(tmp_image+(i+border)*(*x_size+2*border)+border, *in+i* *x_size, *x_size);
-
+    __attribute__((always_inline)) memcpy(tmp_image+(i+border)*(*x_size+2*border)+border, *in+i* *x_size, *x_size);
+  //#pragma clang loop unroll(full)
   for(i=0; i<border; i++) /* copy top and bottom rows; invert as many as necessary */
   {
-    memcpy(tmp_image+(border-1-i)*(*x_size+2*border)+border,*in+i* *x_size,*x_size);
-    memcpy(tmp_image+(*y_size+border+i)*(*x_size+2*border)+border,*in+(*y_size-i-1)* *x_size,*x_size);
+    __attribute__((always_inline)) memcpy(tmp_image+(border-1-i)*(*x_size+2*border)+border,*in+i* *x_size,*x_size);
+    __attribute__((always_inline)) memcpy(tmp_image+(*y_size+border+i)*(*x_size+2*border)+border,*in+(*y_size-i-1)* *x_size,*x_size);
   }
-
+  //#pragma clang loop unroll(full)
   for(i=0; i<border; i++) /* copy left and right columns */
     for(j=0; j<*y_size+2*border; j++)
     {
@@ -724,8 +727,9 @@ TOTAL_TYPE total;
   dp     = (unsigned char *)malloc(n_max*n_max);
   dpt    = dp;
   temp   = -(dt*dt);
-
+  // #pragma clang loop unroll(full)
   for(i=-mask_size; i<=mask_size; i++)
+    // #pragma clang loop unroll(full)
     for(j=-mask_size; j<=mask_size; j++)
     {
       x = (int) (100.0 * exp( ((float)((i*i)+(j*j))) / temp ));
@@ -734,9 +738,10 @@ TOTAL_TYPE total;
 
 /* }}} */
     /* {{{ main section */
-
+  //#pragma clang loop unroll(full)
   for (i=mask_size;i<y_size-mask_size;i++)
   {
+    //#pragma clang loop unroll(full)
     for (j=mask_size;j<x_size-mask_size;j++)
     {
       area = 0;
@@ -745,10 +750,12 @@ TOTAL_TYPE total;
       ip = in + ((i-mask_size)*x_size) + j - mask_size;
       centre = in[i*x_size+j];
       cp = bp + centre;
+      //#pragma clang loop unroll(full)
       for(y=-mask_size; y<=mask_size; y++)
       {
+        #pragma clang loop unroll (enable)
         for(x=-mask_size; x<=mask_size; x++)
-	{
+	      {
           brightness = *ip++;
           tmp = *dpt++ * *(cp-brightness);
           area += tmp;
@@ -769,9 +776,10 @@ TOTAL_TYPE total;
   else
   {     /* 3x3 constant mask */
     /* {{{ main section */
-
+  //#pragma clang loop unroll(full)
   for (i=1;i<y_size-1;i++)
   {
+    //#pragma clang loop unroll(full)
     for (j=1;j<x_size-1;j++)
     {
       area = 0;
@@ -822,6 +830,7 @@ uchar *inp, *midp;
   {
     /* mark 3x3 white block around each edge point */
     midp=mid;
+    //#pragma clang loop unroll(full)
     for (i=0; i<x_size*y_size; i++)
     {
       if (*midp<8) 
@@ -837,6 +846,7 @@ uchar *inp, *midp;
 
   /* now mark 1 black pixel at each edge point */
   midp=mid;
+  //#pragma clang loop unroll(full)
   for (i=0; i<x_size*y_size; i++)
   {
     if (*midp<8) 
@@ -861,8 +871,9 @@ int   l[9], centre, nlinks, npieces,
       b00, b02, b20, b22,
       m, n, a, b, x, y, i, j;
 uchar *mp;
-
+  //#pragma clang loop unroll(full)
   for (i=4;i<y_size-4;i++)
+  //#pragma clang loop unroll(full)
     for (j=4;j<x_size-4;j++)
       if (mid[i*x_size+j]<8)
       {
@@ -921,7 +932,9 @@ uchar *mp;
                                                 l[2]*=2; l[1]*=3; l[3]*=3; l[0]*=4; } }}}}}}}
 
           m=0;     /* find the highest point */
+          //#pragma clang loop unroll(full)
           for(y=0; y<3; y++)
+            //#pragma clang loop unroll(full)
             for(x=0; x<3; x++)
               if (l[y+y+y+x]>m) { m=l[y+y+y+x]; a=y; b=x; }
 
@@ -1070,8 +1083,9 @@ int   do_symmetry, i, j, m, n, a, b, x, y, w;
 uchar c,*p,*cp;
 
   memset (r,0,x_size * y_size * sizeof(int));
-
+  //#pragma clang loop unroll(full)
   for (i=3;i<y_size-3;i++)
+    //#pragma clang loop unroll(full)
     for (j=3;j<x_size-3;j++)
     {
       n=100;
@@ -1131,8 +1145,9 @@ uchar c,*p,*cp;
       if (n<=max_no)
         r[i*x_size+j] = max_no - n;
     }
-
+  //#pragma clang loop unroll(full)
   for (i=4;i<y_size-4;i++)
+    //#pragma clang loop unroll(full)
     for (j=4;j<x_size-4;j++)
     {
       if (r[i*x_size+j]>0)
@@ -1309,8 +1324,9 @@ uchar c,*p,*cp;
   memset (r,0,x_size * y_size * sizeof(int));
 
   max_no = 730; /* ho hum ;) */
-
+  //#pragma clang loop unroll(full)
   for (i=1;i<y_size-1;i++)
+    //#pragma clang loop unroll(full)
     for (j=1;j<x_size-1;j++)
     {
       n=100;
@@ -1334,8 +1350,9 @@ uchar c,*p,*cp;
       if (n<=max_no)
         r[i*x_size+j] = max_no - n;
     }
-
+  //#pragma clang loop unroll(full)
   for (i=2;i<y_size-2;i++)
+    //#pragma clang loop unroll(full)
     for (j=2;j<x_size-2;j++)
     {
       if (r[i*x_size+j]>0)
@@ -1475,8 +1492,9 @@ uchar c,*p,*cp;
 
   cgx=(int *)malloc(x_size*y_size*sizeof(int));
   cgy=(int *)malloc(x_size*y_size*sizeof(int));
-
+  //#pragma clang loop unroll(full)
   for (i=5;i<y_size-5;i++)
+    //#pragma clang loop unroll(full)
     for (j=5;j<x_size-5;j++) {
         n=100;
         p=in + (i-3)*x_size + j - 1;
@@ -1633,7 +1651,9 @@ uchar c,*p,*cp;
 
   /* to locate the local maxima */
   n=0;
+  //#pragma clang loop unroll(full)
   for (i=5;i<y_size-5;i++)
+    //#pragma clang loop unroll(full)
     for (j=5;j<x_size-5;j++) {
        x = r[i*x_size+j];
        if (x>0)  {
@@ -1753,8 +1773,9 @@ int   n,x,y,i,j;
 uchar *p,*cp;
 
   memset (r,0,x_size * y_size * sizeof(int));
-
+  //#pragma clang loop unroll(full)
   for (i=7;i<y_size-7;i++)
+    //#pragma clang loop unroll(full)
     for (j=7;j<x_size-7;j++) {
         n=100;
         p=in + (i-3)*x_size + j - 1;
@@ -1834,7 +1855,9 @@ uchar *p,*cp;
 
   /* to locate the local maxima */
   n=0;
+  //#pragma clang loop unroll(full)
   for (i=7;i<y_size-7;i++)
+    //#pragma clang loop unroll(full)
     for (j=7;j<x_size-7;j++) {
        x = r[i*x_size+j];
        if (x>0)  {
@@ -2054,7 +2077,9 @@ CORNER_LIST corner_list;
       /* {{{ smoothing */
 
       setup_brightness_lut(&bp,bt,2);
+      __asm volatile("xor x0,x0,x0");
       susan_smoothing(three_by_three,in,dt,x_size,y_size,bp);
+      __asm volatile("xor x0,x0,x0");
       break;
 
 /* }}} */

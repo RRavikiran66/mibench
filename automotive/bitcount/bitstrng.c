@@ -54,7 +54,7 @@ int main(void)
       for (j = 1L; j <= 16L; j++)
       {
             bitstring(s, (long)j, (int)j, 16);
-            printf("%2ld: %s\n", j, s);
+            //printf("%2ld: %s\n", j, s);
       }
       return EXIT_SUCCESS;
 }

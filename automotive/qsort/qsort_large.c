@@ -23,9 +23,7 @@ int compare(const void *elem1, const void *elem2)
   return (distance1 > distance2) ? 1 : ((distance1 == distance2) ? 0 : -1);
 }
 
-
-int
-main(int argc, char *argv[]) {
+__attribute__((always_inline)) int main(int argc, char *argv[]) {
   struct my3DVertexStruct array[MAXARRAY];
   FILE *fp;
   int i,count=0;
@@ -46,10 +44,11 @@ main(int argc, char *argv[]) {
 	 count++;
     }
   }
-  printf("\nSorting %d vectors based on distance from the origin.\n\n",count);
+  //printf("\nSorting %d vectors based on distance from the origin.\n\n",count);
+  __asm volatile("xor x0,x0,x0");
   qsort(array,count,sizeof(struct my3DVertexStruct),compare);
-  
-  for(i=0;i<count;i++)
-    printf("%d %d %d\n", array[i].x, array[i].y, array[i].z);
+  __asm volatile("xor x0,x0,x0");
+  // for(i=0;i<count;i++)
+  //   printf("%d %d %d\n", array[i].x, array[i].y, array[i].z);
   return 0;
 }

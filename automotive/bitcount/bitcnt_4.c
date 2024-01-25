@@ -73,8 +73,7 @@ main(int argc, char *argv[])
 
             n = atol(*++argv);
             i = btbl_bitcnt(n);
-            printf("%ld contains %d bit%s set\n",
-                  n, i, plural_text(i));
+            printf("%ld contains %d bit%s set\n", n, i, plural_text(i));
       }
       return 0;
 }

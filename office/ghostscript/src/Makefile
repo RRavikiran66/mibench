@@ -174,7 +174,7 @@ CONFIG=
 # Define the name of the C compiler.
 
 #CC=gcc -mv8 -static
-CC=gcc -static
+CC=/home/ssingh/riscv/riscv-gnu-toolchain/build/bin/riscv64-unknown-linux-gnu-gcc -O3 -static
 #CC=gcc
 
 # Define the name of the linker for the final link step.

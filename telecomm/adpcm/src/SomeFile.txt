@@ -1,0 +1,316 @@
+cc    -c -o rawcaudio.o rawcaudio.c
+cc    -c -o adpcm.o adpcm.c
+rawcaudio.c:13:1: warning: return type defaults to ‘int’ [-Wimplicit-int]
+   13 | main() {
+      | ^~~~
+rawcaudio.c: In function ‘main’:
+rawcaudio.c:17:6: warning: implicit declaration of function ‘read’; did you mean ‘fread’? [-Wimplicit-function-declaration]
+   17 |  n = read(0, sbuf, NSAMPLES*2);
+      |      ^~~~
+      |      fread
+rawcaudio.c:20:6: warning: implicit declaration of function ‘exit’ [-Wimplicit-function-declaration]
+   20 |      exit(1);
+      |      ^~~~
+rawcaudio.c:20:6: warning: incompatible implicit declaration of built-in function ‘exit’
+rawcaudio.c:5:1: note: include ‘<stdlib.h>’ or provide a declaration of ‘exit’
+    4 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+    5 | 
+rawcaudio.c:24:2: warning: implicit declaration of function ‘write’; did you mean ‘fwrite’? [-Wimplicit-function-declaration]
+   24 |  write(1, abuf, n/4);
+      |  ^~~~~
+      |  fwrite
+rawcaudio.c:28:5: warning: incompatible implicit declaration of built-in function ‘exit’
+   28 |     exit(0);
+      |     ^~~~
+rawcaudio.c:28:5: note: include ‘<stdlib.h>’ or provide a declaration of ‘exit’
+cc  rawcaudio.o adpcm.o -o rawcaudio
+clang  -O3 -S --target=riscv64 -march=rv64imafdc -emit-llvm -static -Xclang -disable-O0-optnone -lm -ansi -I /home/ravikiran/work/chipyard/riscv-tools-install/riscv64-unknown-elf/include/ rawcaudio.c -o rawcaudio.ll;
+clang-15: warning: -lm: 'linker' input unused [-Wunused-command-line-argument]
+rawcaudio.c:20:6: warning: implicitly declaring library function 'exit' with type 'void (int) __attribute__((noreturn))' [-Wimplicit-function-declaration]
+            exit(1);
+            ^
+rawcaudio.c:20:6: note: include the header <stdlib.h> or explicitly provide a declaration for 'exit'
+1 warning generated.
+opt -passes='default<O3>,helloworld' rawcaudio.ll -S -o rawcaudio_reorderloads.ll;
+Number of Reorders: 0
+Number of wasted: 0
+Number of Reorders: 0
+Number of wasted: 0
+Number of Reorders: 0
+Number of wasted: 0
+Number of Reorders: 0
+Number of wasted: 0
+Def Chain leading to:   %14 = load ptr, ptr %13, align 8, !tbaa !8
+Instructions in between  %12 = load ptr, ptr @_impure_ptr, align 8, !tbaa !4
+Instructions in between  %13 = getelementptr inbounds %struct._reent, ptr %12, i64 0, i32 3
+Instructions in between  %14 = load ptr, ptr %13, align 8, !tbaa !8
+PrevLoad in the UseChain: True
+Use Chain for:   %14 = load ptr, ptr %13, align 8, !tbaa !8
+Inst in Use Chain  %12 = load ptr, ptr @_impure_ptr, align 8, !tbaa !4
+Inst in Use Chain  %13 = getelementptr inbounds %struct._reent, ptr %12, i64 0, i32 3
+Inst in Use Chain  %14 = load ptr, ptr %13, align 8, !tbaa !8
+Ins move after prevLoad  %14 = load ptr, ptr %13, align 8, !tbaa !8
+Ins move after prevLoad  %13 = getelementptr inbounds %struct._reent, ptr %12, i64 0, i32 3
+
+Def Chain leading to:   %15 = load i16, ptr @state, align 2, !tbaa !14
+Instructions in between  %14 = load ptr, ptr %13, align 8, !tbaa !8
+Instructions in between  %15 = load i16, ptr @state, align 2, !tbaa !14
+PrevLoad in the UseChain: False
+Use Chain for:   %15 = load i16, ptr @state, align 2, !tbaa !14
+Inst in Use Chain  %15 = load i16, ptr @state, align 2, !tbaa !14
+Ins move after prevLoad  %15 = load i16, ptr @state, align 2, !tbaa !14
+
+Def Chain leading to:   %17 = load i8, ptr getelementptr inbounds (%struct.adpcm_state, ptr @state, i64 0, i32 1), align 2, !tbaa !17
+Instructions in between  %15 = load i16, ptr @state, align 2, !tbaa !14
+Instructions in between  %16 = sext i16 %15 to i32
+Instructions in between  %17 = load i8, ptr getelementptr inbounds (%struct.adpcm_state, ptr @state, i64 0, i32 1), align 2, !tbaa !17
+PrevLoad in the UseChain: False
+Use Chain for:   %17 = load i8, ptr getelementptr inbounds (%struct.adpcm_state, ptr @state, i64 0, i32 1), align 2, !tbaa !17
+Inst in Use Chain  %17 = load i8, ptr getelementptr inbounds (%struct.adpcm_state, ptr @state, i64 0, i32 1), align 2, !tbaa !17
+Ins move after prevLoad  %16 = load i8, ptr getelementptr inbounds (%struct.adpcm_state, ptr @state, i64 0, i32 1), align 2, !tbaa !17
+
+Number of Reorders: 2
+Number of wasted: 0
+llc  -O3 -filetype=obj -mcpu=sifive-u74 -o rawcaudio.o rawcaudio.ll;
+llc  -O3 -filetype=obj -mcpu=sifive-u74 -o rawcaudio_reorderloads.o rawcaudio_reorderloads.ll;  
+llvm-link -S rawcaudio_reorderloads.ll -o rawcaudio_reorderloads_o.ll;
+clang  -O3 -S --target=riscv64 -march=rv64imafdc -emit-llvm -static -Xclang -disable-O0-optnone -lm -ansi -I /home/ravikiran/work/chipyard/riscv-tools-install/riscv64-unknown-elf/include/ adpcm.c -o adpcm.ll;
+clang-15: warning: -lm: 'linker' input unused [-Wunused-command-line-argument]
+adpcm.c:73:1: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C2x [-Wdeprecated-non-prototype]
+adpcm_coder(indata, outdata, len, state)
+^
+adpcm.c:176:1: warning: a function definition without a prototype is deprecated in all versions of C and is not supported in C2x [-Wdeprecated-non-prototype]
+adpcm_decoder(indata, outdata, len, state)
+^
+2 warnings generated.
+opt -passes='default<O3>,helloworld' adpcm.ll -S -o adpcm_reorderloads.ll;
+Def Chain leading to:   %7 = load i8, ptr %6, align 2, !tbaa !9
+Instructions in between  %5 = load i16, ptr %3, align 2, !tbaa !4
+Instructions in between  %6 = getelementptr inbounds %struct.adpcm_state, ptr %3, i64 0, i32 1
+Instructions in between  %7 = load i8, ptr %6, align 2, !tbaa !9
+PrevLoad in the UseChain: False
+Use Chain for:   %7 = load i8, ptr %6, align 2, !tbaa !9
+Inst in Use Chain  %6 = getelementptr inbounds %struct.adpcm_state, ptr %3, i64 0, i32 1
+Inst in Use Chain  %7 = load i8, ptr %6, align 2, !tbaa !9
+Ins move before prevLoad  %5 = getelementptr inbounds %struct.adpcm_state, ptr %3, i64 0, i32 1
+Ins move after prevLoad  %7 = load i8, ptr %5, align 2, !tbaa !9
+
+Number of Reorders: 2
+Number of wasted: 0
+Def Chain leading to:   %12 = load i32, ptr %11, align 4, !tbaa !10
+
+Number of Reorders: 2
+Number of wasted: 0
+Def Chain leading to:   %25 = load i16, ptr %22, align 2, !tbaa !12
+
+Def Chain leading to:   %60 = load i32, ptr %59, align 4, !tbaa !10
+Instructions in between  %25 = load i16, ptr %22, align 2, !tbaa !12
+Instructions in between  %26 = sext i16 %25 to i32
+Instructions in between  %27 = sub nsw i32 %26, %19
+Instructions in between  %28 = icmp slt i32 %27, 0
+Instructions in between  %29 = lshr i32 %27, 28
+Instructions in between  %30 = and i32 %29, 8
+Instructions in between  %31 = tail call i32 @llvm.abs.i32(i32 %27, i1 true)
+Instructions in between  %32 = ashr i32 %20, 3
+Instructions in between  %33 = icmp slt i32 %31, %20
+Instructions in between  %34 = select i1 %33, i32 0, i32 4
+Instructions in between  %35 = select i1 %33, i32 0, i32 %20
+Instructions in between  %36 = sub nsw i32 %31, %35
+Instructions in between  %37 = add nsw i32 %35, %32
+Instructions in between  %38 = ashr i32 %20, 1
+Instructions in between  %39 = icmp slt i32 %36, %38
+Instructions in between  %40 = or i32 %34, 2
+Instructions in between  %41 = select i1 %39, i32 %34, i32 %40
+Instructions in between  %42 = select i1 %39, i32 0, i32 %38
+Instructions in between  %43 = sub nsw i32 %36, %42
+Instructions in between  %44 = add nsw i32 %37, %42
+Instructions in between  %45 = ashr i32 %20, 2
+Instructions in between  %46 = icmp slt i32 %43, %45
+Instructions in between  %47 = xor i1 %46, true
+Instructions in between  %48 = zext i1 %47 to i32
+Instructions in between  %49 = select i1 %46, i32 0, i32 %45
+Instructions in between  %50 = add nsw i32 %44, %49
+Instructions in between  %51 = sub i32 0, %50
+Instructions in between  %52 = select i1 %28, i32 %51, i32 %50
+Instructions in between  %53 = add i32 %52, %19
+Instructions in between  %54 = tail call i32 @llvm.smax.i32(i32 %53, i32 -32768)
+Instructions in between  %55 = tail call i32 @llvm.smin.i32(i32 %54, i32 32767)
+Instructions in between  %56 = or i32 %41, %30
+Instructions in between  %57 = or i32 %56, %48
+Instructions in between  %58 = zext i32 %57 to i64
+Instructions in between  %59 = getelementptr inbounds [16 x i32], ptr @indexTable, i64 0, i64 %58
+Instructions in between  %60 = load i32, ptr %59, align 4, !tbaa !10
+PrevLoad in the UseChain: True
+Use Chain for:   %60 = load i32, ptr %59, align 4, !tbaa !10
+Inst in Use Chain  %25 = load i16, ptr %22, align 2, !tbaa !12
+Inst in Use Chain  %42 = select i1 %39, i32 0, i32 %38
+Inst in Use Chain  %26 = sext i16 %25 to i32
+Inst in Use Chain  %35 = select i1 %33, i32 0, i32 %20
+Inst in Use Chain  %31 = tail call i32 @llvm.abs.i32(i32 %27, i1 true)
+Inst in Use Chain  %45 = ashr i32 %20, 2
+Inst in Use Chain  %43 = sub nsw i32 %36, %42
+Inst in Use Chain  %27 = sub nsw i32 %26, %19
+Inst in Use Chain  %33 = icmp slt i32 %31, %20
+Inst in Use Chain  %38 = ashr i32 %20, 1
+Inst in Use Chain  %36 = sub nsw i32 %31, %35
+Inst in Use Chain  %46 = icmp slt i32 %43, %45
+Inst in Use Chain  %29 = lshr i32 %27, 28
+Inst in Use Chain  %40 = or i32 %34, 2
+Inst in Use Chain  %34 = select i1 %33, i32 0, i32 4
+Inst in Use Chain  %39 = icmp slt i32 %36, %38
+Inst in Use Chain  %47 = xor i1 %46, true
+Inst in Use Chain  %30 = and i32 %29, 8
+Inst in Use Chain  %41 = select i1 %39, i32 %34, i32 %40
+Inst in Use Chain  %48 = zext i1 %47 to i32
+Inst in Use Chain  %56 = or i32 %41, %30
+Inst in Use Chain  %57 = or i32 %56, %48
+Inst in Use Chain  %58 = zext i32 %57 to i64
+Inst in Use Chain  %59 = getelementptr inbounds [16 x i32], ptr @indexTable, i64 0, i64 %58
+Inst in Use Chain  %60 = load i32, ptr %59, align 4, !tbaa !10
+Ins move after prevLoad  %60 = load i32, ptr %59, align 4, !tbaa !10
+Ins move after prevLoad  %59 = getelementptr inbounds [16 x i32], ptr @indexTable, i64 0, i64 %58
+Ins move after prevLoad  %58 = zext i32 %57 to i64
+Ins move after prevLoad  %57 = or i32 %56, %48
+Ins move after prevLoad  %56 = or i32 %41, %30
+Ins move after prevLoad  %48 = zext i1 %47 to i32
+Ins move after prevLoad  %41 = select i1 %39, i32 %34, i32 %40
+Ins move after prevLoad  %30 = and i32 %29, 8
+Ins move after prevLoad  %47 = xor i1 %46, true
+Ins move after prevLoad  %39 = icmp slt i32 %36, %38
+Ins move after prevLoad  %34 = select i1 %33, i32 0, i32 4
+Ins move after prevLoad  %40 = or i32 %34, 2
+Ins move after prevLoad  %29 = lshr i32 %27, 28
+Ins move after prevLoad  %46 = icmp slt i32 %43, %45
+Ins move after prevLoad  %36 = sub nsw i32 %31, %35
+Ins move after prevLoad  %38 = ashr i32 %20, 1
+Ins move after prevLoad  %33 = icmp slt i32 %31, %20
+Ins move after prevLoad  %27 = sub nsw i32 %26, %19
+Ins move after prevLoad  %43 = sub nsw i32 %36, %42
+Ins move after prevLoad  %45 = ashr i32 %20, 2
+Ins move after prevLoad  %31 = tail call i32 @llvm.abs.i32(i32 %27, i1 true)
+Ins move after prevLoad  %35 = select i1 %33, i32 0, i32 %20
+Ins move after prevLoad  %26 = sext i16 %25 to i32
+Ins move after prevLoad  %42 = select i1 %39, i32 0, i32 %38
+
+Def Chain leading to:   %66 = load i32, ptr %65, align 4, !tbaa !10
+Instructions in between  %60 = load i32, ptr %59, align 4, !tbaa !10
+Instructions in between  %61 = add nsw i32 %60, %18
+Instructions in between  %62 = tail call i32 @llvm.smax.i32(i32 %61, i32 0)
+Instructions in between  %63 = tail call i32 @llvm.umin.i32(i32 %62, i32 88)
+Instructions in between  %64 = zext i32 %63 to i64
+Instructions in between  %65 = getelementptr inbounds [89 x i32], ptr @stepsizeTable, i64 0, i64 %64
+Instructions in between  %66 = load i32, ptr %65, align 4, !tbaa !10
+PrevLoad in the UseChain: True
+Use Chain for:   %66 = load i32, ptr %65, align 4, !tbaa !10
+Inst in Use Chain  %60 = load i32, ptr %59, align 4, !tbaa !10
+Inst in Use Chain  %61 = add nsw i32 %60, %18
+Inst in Use Chain  %62 = tail call i32 @llvm.smax.i32(i32 %61, i32 0)
+Inst in Use Chain  %63 = tail call i32 @llvm.umin.i32(i32 %62, i32 88)
+Inst in Use Chain  %64 = zext i32 %63 to i64
+Inst in Use Chain  %65 = getelementptr inbounds [89 x i32], ptr @stepsizeTable, i64 0, i64 %64
+Inst in Use Chain  %66 = load i32, ptr %65, align 4, !tbaa !10
+Ins move after prevLoad  %66 = load i32, ptr %65, align 4, !tbaa !10
+Ins move after prevLoad  %65 = getelementptr inbounds [89 x i32], ptr @stepsizeTable, i64 0, i64 %64
+Ins move after prevLoad  %64 = zext i32 %63 to i64
+Ins move after prevLoad  %63 = tail call i32 @llvm.umin.i32(i32 %62, i32 88)
+Ins move after prevLoad  %62 = tail call i32 @llvm.smax.i32(i32 %61, i32 0)
+Ins move after prevLoad  %61 = add nsw i32 %60, %18
+
+Number of Reorders: 671
+Number of wasted: 0
+Number of Reorders: 671
+Number of wasted: 0
+Number of Reorders: 671
+Number of wasted: 0
+Number of Reorders: 671
+Number of wasted: 0
+Number of Reorders: 671
+Number of wasted: 0
+Number of Reorders: 671
+Number of wasted: 0
+Number of Reorders: 671
+Number of wasted: 0
+Def Chain leading to:   %7 = load i8, ptr %6, align 2, !tbaa !9
+Instructions in between  %5 = load i16, ptr %3, align 2, !tbaa !4
+Instructions in between  %6 = getelementptr inbounds %struct.adpcm_state, ptr %3, i64 0, i32 1
+Instructions in between  %7 = load i8, ptr %6, align 2, !tbaa !9
+PrevLoad in the UseChain: False
+Use Chain for:   %7 = load i8, ptr %6, align 2, !tbaa !9
+Inst in Use Chain  %6 = getelementptr inbounds %struct.adpcm_state, ptr %3, i64 0, i32 1
+Inst in Use Chain  %7 = load i8, ptr %6, align 2, !tbaa !9
+Ins move before prevLoad  %5 = getelementptr inbounds %struct.adpcm_state, ptr %3, i64 0, i32 1
+Ins move after prevLoad  %7 = load i8, ptr %5, align 2, !tbaa !9
+
+Number of Reorders: 2
+Number of wasted: 0
+Def Chain leading to:   %12 = load i32, ptr %11, align 4, !tbaa !10
+
+Number of Reorders: 2
+Number of wasted: 0
+Number of Reorders: 2
+Number of wasted: 0
+Def Chain leading to:   %27 = load i8, ptr %23, align 1, !tbaa !12
+
+Number of Reorders: 2
+Number of wasted: 0
+Def Chain leading to:   %38 = load i32, ptr %37, align 4, !tbaa !10
+
+Def Chain leading to:   %66 = load i32, ptr %65, align 4, !tbaa !10
+Instructions in between  %38 = load i32, ptr %37, align 4, !tbaa !10
+Instructions in between  %39 = add nsw i32 %38, %18
+Instructions in between  %40 = tail call i32 @llvm.smax.i32(i32 %39, i32 0)
+Instructions in between  %41 = tail call i32 @llvm.umin.i32(i32 %40, i32 88)
+Instructions in between  %42 = and i32 %32, 8
+Instructions in between  %43 = ashr i32 %20, 3
+Instructions in between  %44 = and i32 %32, 4
+Instructions in between  %45 = icmp eq i32 %44, 0
+Instructions in between  %46 = select i1 %45, i32 0, i32 %20
+Instructions in between  %47 = add nsw i32 %46, %43
+Instructions in between  %48 = and i32 %32, 2
+Instructions in between  %49 = icmp eq i32 %48, 0
+Instructions in between  %50 = ashr i32 %20, 1
+Instructions in between  %51 = select i1 %49, i32 0, i32 %50
+Instructions in between  %52 = add nsw i32 %47, %51
+Instructions in between  %53 = and i32 %32, 1
+Instructions in between  %54 = icmp eq i32 %53, 0
+Instructions in between  %55 = ashr i32 %20, 2
+Instructions in between  %56 = select i1 %54, i32 0, i32 %55
+Instructions in between  %57 = add nsw i32 %52, %56
+Instructions in between  %58 = icmp eq i32 %42, 0
+Instructions in between  %59 = sub i32 0, %57
+Instructions in between  %60 = select i1 %58, i32 %57, i32 %59
+Instructions in between  %61 = add i32 %60, %19
+Instructions in between  %62 = tail call i32 @llvm.smax.i32(i32 %61, i32 -32768)
+Instructions in between  %63 = tail call i32 @llvm.smin.i32(i32 %62, i32 32767)
+Instructions in between  %64 = zext i32 %41 to i64
+Instructions in between  %65 = getelementptr inbounds [89 x i32], ptr @stepsizeTable, i64 0, i64 %64
+Instructions in between  %66 = load i32, ptr %65, align 4, !tbaa !10
+PrevLoad in the UseChain: True
+Use Chain for:   %66 = load i32, ptr %65, align 4, !tbaa !10
+Inst in Use Chain  %38 = load i32, ptr %37, align 4, !tbaa !10
+Inst in Use Chain  %39 = add nsw i32 %38, %18
+Inst in Use Chain  %40 = tail call i32 @llvm.smax.i32(i32 %39, i32 0)
+Inst in Use Chain  %41 = tail call i32 @llvm.umin.i32(i32 %40, i32 88)
+Inst in Use Chain  %64 = zext i32 %41 to i64
+Inst in Use Chain  %65 = getelementptr inbounds [89 x i32], ptr @stepsizeTable, i64 0, i64 %64
+Inst in Use Chain  %66 = load i32, ptr %65, align 4, !tbaa !10
+Ins move after prevLoad  %66 = load i32, ptr %65, align 4, !tbaa !10
+Ins move after prevLoad  %65 = getelementptr inbounds [89 x i32], ptr @stepsizeTable, i64 0, i64 %64
+Ins move after prevLoad  %64 = zext i32 %41 to i64
+Ins move after prevLoad  %41 = tail call i32 @llvm.umin.i32(i32 %40, i32 88)
+Ins move after prevLoad  %40 = tail call i32 @llvm.smax.i32(i32 %39, i32 0)
+Ins move after prevLoad  %39 = add nsw i32 %38, %18
+
+Number of Reorders: 16
+Number of wasted: 0
+Number of Reorders: 16
+Number of wasted: 0
+Number of Reorders: 16
+Number of wasted: 0
+llc  -O3 -filetype=obj -mcpu=sifive-u74 -o adpcm.o adpcm.ll;
+llc  -O3 -filetype=obj -mcpu=sifive-u74 -o adpcm_reorderloads.o adpcm_reorderloads.ll;
+llvm-link -S adpcm_reorderloads.ll rawcaudio_reorderloads.ll -o adpcm_reorderloads_o.ll;
+llc  -O3 -filetype=obj -mcpu=sifive-u74 -o adpcm_reorderloads_o.o adpcm_reorderloads_o.ll;
+riscv64-unknown-elf-gcc -mcpu=sifive-u74 -march=rv64imafdc -mabi=lp64d -lm --sysroot=/opt/riscv/sysroot adpcm_reorderloads_o.o  -I /home/ravikiran/work/chipyard/riscv-tools-install/riscv64-unknown-elf/include/ -o rawcaudio_reorderloads -lm -lc;
+riscv64-unknown-elf-gcc -mcpu=sifive-u74 -march=rv64imafdc -mabi=lp64d -lm --sysroot=/opt/riscv/sysroot rawcaudio.o adpcm.o -I /home/ravikiran/work/chipyard/riscv-tools-install/riscv64-unknown-elf/include/math.h -o rawcaudio -lm -lc;

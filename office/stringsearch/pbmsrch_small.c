@@ -29,8 +29,10 @@ void init_search(const char *string)
       size_t i;
 
       len = strlen(string);
+	  // #pragma clang loop unroll(full)
       for (i = 0; i <= UCHAR_MAX; i++)                      /* rdg 10/93 */
             table[i] = len;
+	  // #pragma clang loop unroll(full)
       for (i = 0; i < len; i++)
             table[(unsigned char)string[i]] = len - i - 1;
       findme = (char *)string;
@@ -145,18 +147,19 @@ main()
 				"principles."			       
 };
       int i;
-
+	  __asm volatile("xor x0,x0,x0");
+	  #pragma clang loop unroll (enable)
       for (i = 0; find_strings[i]; i++)
       {
-            init_search(find_strings[i]);
-            here = strsearch(search_strings[i]);
+            init_search(find_strings[i]);			
+            here = strsearch(search_strings[i]);			
             printf("\"%s\" is%s in \"%s\"", find_strings[i],
                   here ? "" : " not", search_strings[i]);
             if (here)
                   printf(" [\"%s\"]", here);
             putchar('\n');
       }
-
+	  __asm volatile("xor x0,x0,x0");
       return 0;
 }
 

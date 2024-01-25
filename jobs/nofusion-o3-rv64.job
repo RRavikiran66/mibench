@@ -1,0 +1,4 @@
+#!/bin/bash
+#SBATCH --job-name=nofusion-o3-rv64
+#SBATCH --output=nofusion-o3-rv64.log
+make run_automotive FFLAG=nofusion-o3-rv64

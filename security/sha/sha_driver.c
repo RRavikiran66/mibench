@@ -13,7 +13,9 @@ int main(int argc, char **argv)
 
     if (argc < 2) {
 	fin = stdin;
+	__asm volatile("xor x0,x0,x0");
 	sha_stream(&sha_info, fin);
+	__asm volatile("xor x0,x0,x0");
 	sha_print(&sha_info);
     } else {
 	while (--argc) {
@@ -21,7 +23,9 @@ int main(int argc, char **argv)
 	    if (fin == NULL) {
 		printf("error opening %s for reading\n", *argv);
 	    } else {
+		__asm volatile("xor x0,x0,x0");
 		sha_stream(&sha_info, fin);
+		__asm volatile("xor x0,x0,x0");
 		sha_print(&sha_info);
 		fclose(fin);
 	    }

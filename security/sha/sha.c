@@ -13,6 +13,7 @@
 
 /* SHA f()-functions */
 
+#define UNROLL_LOOPS
 #define f1(x,y,z)	((x & y) | (~x & z))
 #define f2(x,y,z)	(x ^ y ^ z)
 #define f3(x,y,z)	((x & y) | (x & z) | (y & z))
@@ -39,10 +40,11 @@ static void sha_transform(SHA_INFO *sha_info)
 {
     int i;
     LONG temp, A, B, C, D, E, W[80];
-
+    #pragma clang loop unroll (enable)
     for (i = 0; i < 16; ++i) {
 	W[i] = sha_info->data[i];
     }
+    #pragma clang loop unroll (enable)
     for (i = 16; i < 80; ++i) {
 	W[i] = W[i-3] ^ W[i-8] ^ W[i-14] ^ W[i-16];
 #ifdef USE_MODIFIED_SHA

@@ -1,0 +1,4 @@
+#!/bin/bash
+#SBATCH --job-name=generic-rv64
+#SBATCH --output=generic-rv64.log
+make run_automotive FFLAG=generic-rv64

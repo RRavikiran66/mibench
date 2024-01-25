@@ -36,10 +36,11 @@ main(int argc, char *argv[]) {
 	 count++;
     }
   }
-  printf("\nSorting %d elements.\n\n",count);
+  //printf("\nSorting %d elements.\n\n",count);
+  __asm volatile("xor x0,x0,x0");
   qsort(array,count,sizeof(struct myStringStruct),compare);
-  
-  for(i=0;i<count;i++)
-    printf("%s\n", array[i].qstring);
-  return 0;
+  __asm volatile("xor x0,x0,x0");
+  // for(i=0;i<count;i++)
+  //   printf("%s\n", array[i].qstring);
+  // return 0;
 }
