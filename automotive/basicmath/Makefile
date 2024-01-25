@@ -31,28 +31,28 @@ basicmath_small: ${FILE1} Makefile
 	$(LLC) $(LLC_FLAGS) -o basicmath_small.o basicmath_small.ll;	
 	$(RISCV_COMPILER) $(RISCV_FLAGS) basicmath_small.o cubic.o isqrt.o rad2deg.o -I /opt/riscv/sysroot/usr/include/ -o basicmath_small -lm;
 
-basicmath_small_reorderloads: ${FILE1} Makefile
-	# gcc -static -O3 ${FILE1} -o basicmath_small -lm
+# basicmath_small_reorderloads: ${FILE1} Makefile
+# 	# gcc -static -O3 ${FILE1} -o basicmath_small -lm
 
-	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ rad2deg.c -o rad2deg.ll;
-	$(OPT) -passes=$(PASS) rad2deg.ll -S -o rad2deg_reorderloads.ll;
-	$(LLC) $(LLC_FLAGS)  -o rad2deg_reorderloads.o rad2deg_reorderloads.ll;
+# 	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ rad2deg.c -o rad2deg.ll;
+# 	$(OPT) -passes=$(PASS) rad2deg.ll -S -o rad2deg_reorderloads.ll;
+# 	$(LLC) $(LLC_FLAGS)  -o rad2deg_reorderloads.o rad2deg_reorderloads.ll;
 
-	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ cubic.c -o cubic.ll;
-	$(OPT) -passes=$(PASS) cubic.ll -S -o cubic_reorderloads.ll;
-	$(LLC) $(LLC_FLAGS)  -o cubic_reorderloads.o cubic_reorderloads.ll;
+# 	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ cubic.c -o cubic.ll;
+# 	$(OPT) -passes=$(PASS) cubic.ll -S -o cubic_reorderloads.ll;
+# 	$(LLC) $(LLC_FLAGS)  -o cubic_reorderloads.o cubic_reorderloads.ll;
 
-	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ isqrt.c -o isqrt.ll;
-	$(OPT) -passes=$(PASS) isqrt.ll -S -o isqrt_reorderloads.ll;
-	$(LLC) $(LLC_FLAGS)  -o isqrt_reorderloads.o isqrt_reorderloads.ll;
+# 	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ isqrt.c -o isqrt.ll;
+# 	$(OPT) -passes=$(PASS) isqrt.ll -S -o isqrt_reorderloads.ll;
+# 	$(LLC) $(LLC_FLAGS)  -o isqrt_reorderloads.o isqrt_reorderloads.ll;
 
-	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ basicmath_small.c -o basicmath_small.ll;
-	$(OPT) -passes='loop-unroll' basicmath_small.ll -S -o basicmath_small_unroll.ll;
-	$(OPT) -passes=$(PASS) basicmath_small_unroll.ll -S -o basicmath_small_reorderloads.ll;
-	$(LLVM_LINK) -S rad2deg_reorderloads.ll isqrt_reorderloads.ll cubic_reorderloads.ll basicmath_small_reorderloads.ll -o basicmath_small_reorderloads_o.ll
-	$(LLC) $(LLC_FLAGS)  -o basicmath_small_reorderloads_o.o basicmath_small_reorderloads_o.ll;
-	$(RISCV_COMPILER) $(RISCV_FLAGS) basicmath_small_reorderloads_o.o -I /opt/riscv/sysroot/usr/include/ -o basicmath_small_reorderloads -lm;
-	# $(RISCV_COMPILER) $(RISCV_FLAGS) basicmath_small_reorderloads.o cubic_reorderloads.o isqrt_reorderloads.o rad2deg_reorderloads.o -I /opt/riscv/sysroot/usr/include/ -o basicmath_small_reorderloads -lm;
+# 	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ basicmath_small.c -o basicmath_small.ll;
+# 	$(OPT) -passes='loop-unroll' basicmath_small.ll -S -o basicmath_small_unroll.ll;
+# 	$(OPT) -passes=$(PASS) basicmath_small_unroll.ll -S -o basicmath_small_reorderloads.ll;
+# 	$(LLVM_LINK) -S rad2deg_reorderloads.ll isqrt_reorderloads.ll cubic_reorderloads.ll basicmath_small_reorderloads.ll -o basicmath_small_reorderloads_o.ll
+# 	$(LLC) $(LLC_FLAGS)  -o basicmath_small_reorderloads_o.o basicmath_small_reorderloads_o.ll;
+# 	$(RISCV_COMPILER) $(RISCV_FLAGS) basicmath_small_reorderloads_o.o -I /opt/riscv/sysroot/usr/include/ -o basicmath_small_reorderloads -lm;
+# 	# $(RISCV_COMPILER) $(RISCV_FLAGS) basicmath_small_reorderloads.o cubic_reorderloads.o isqrt_reorderloads.o rad2deg_reorderloads.o -I /opt/riscv/sysroot/usr/include/ -o basicmath_small_reorderloads -lm;
 
 basicmath_large: ${FILE2} Makefile
 	# gcc -static -O3 ${FILE2} -o basicmath_large -lm
@@ -61,7 +61,7 @@ basicmath_large: ${FILE2} Makefile
 	$(LLC) $(LLC_FLAGS) -o rad2deg.o rad2deg.ll;
 
 	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ cubic.c -o cubic.ll;
-	$(LLC) $(LLC_FLAGS)  -o cubic_reorderloads.o cubic_reorderloads.ll;
+	$(LLC) $(LLC_FLAGS)  -o cubic.o cubic.ll;
 
 	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ isqrt.c -o isqrt.ll;
 	$(LLC) $(LLC_FLAGS) -o isqrt.o isqrt.ll;
@@ -70,27 +70,27 @@ basicmath_large: ${FILE2} Makefile
 	$(LLC) $(LLC_FLAGS) -o basicmath_large.o basicmath_large.ll;
 	$(RISCV_COMPILER) $(RISCV_FLAGS) basicmath_large.o cubic.o isqrt.o rad2deg.o -I /opt/riscv/sysroot/usr/include/ -o basicmath_large -lm;
 
-basicmath_large_reorderloads: ${FILE2} Makefile
-	# gcc -static -O3 ${FILE2} -o basicmath_large -lm
+# basicmath_large_reorderloads: ${FILE2} Makefile
+# 	# gcc -static -O3 ${FILE2} -o basicmath_large -lm
 
-	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ rad2deg.c -o rad2deg.ll;
-	$(OPT) -passes=$(PASS) rad2deg.ll -S -o rad2deg_reorderloads.ll;
-	$(LLC) $(LLC_FLAGS)  -o rad2deg_reorderloads.o rad2deg_reorderloads.ll;
+# 	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ rad2deg.c -o rad2deg.ll;
+# 	$(OPT) -passes=$(PASS) rad2deg.ll -S -o rad2deg_reorderloads.ll;
+# 	$(LLC) $(LLC_FLAGS)  -o rad2deg_reorderloads.o rad2deg_reorderloads.ll;
 
-	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ cubic.c -o cubic.ll;
-	$(OPT) -passes=$(PASS) cubic.ll -S -o cubic_reorderloads.ll;
-	$(LLC) $(LLC_FLAGS)  -o cubic_reorderloads.o cubic_reorderloads.ll;
+# 	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ cubic.c -o cubic.ll;
+# 	$(OPT) -passes=$(PASS) cubic.ll -S -o cubic_reorderloads.ll;
+# 	$(LLC) $(LLC_FLAGS)  -o cubic_reorderloads.o cubic_reorderloads.ll;
 
-	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ isqrt.c -o isqrt.ll;
-	$(OPT) -passes=$(PASS) isqrt.ll -S -o isqrt_reorderloads.ll;
-	$(LLC) $(LLC_FLAGS)  -o isqrt_reorderloads.o isqrt_reorderloads.ll;
+# 	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ isqrt.c -o isqrt.ll;
+# 	$(OPT) -passes=$(PASS) isqrt.ll -S -o isqrt_reorderloads.ll;
+# 	$(LLC) $(LLC_FLAGS)  -o isqrt_reorderloads.o isqrt_reorderloads.ll;
 
-	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ basicmath_large.c -o basicmath_large.ll;
-	$(OPT) -passes='loop-unroll' basicmath_large.ll -S -o basicmath_large_unroll.ll;
-	$(OPT) -passes=$(PASS) basicmath_large.ll -S -o basicmath_large_reorderloads.ll;
-	$(LLVM_LINK) -S rad2deg_reorderloads.ll isqrt_reorderloads.ll cubic_reorderloads.ll basicmath_large_reorderloads.ll -o basicmath_large_reorderloads_o.ll
-	$(LLC) $(LLC_FLAGS)  -o basicmath_large_reorderloads_o.o basicmath_large_reorderloads_o.ll;
-	$(RISCV_COMPILER) $(RISCV_FLAGS) basicmath_large_reorderloads_o.o -I /opt/riscv/sysroot/usr/include/ -o basicmath_large_reorderloads -lm;
+# 	$(COMPILER_CLANG) $(FLAGS) -I /opt/riscv/sysroot/usr/include/ basicmath_large.c -o basicmath_large.ll;
+# 	$(OPT) -passes='loop-unroll' basicmath_large.ll -S -o basicmath_large_unroll.ll;
+# 	$(OPT) -passes=$(PASS) basicmath_large.ll -S -o basicmath_large_reorderloads.ll;
+# 	$(LLVM_LINK) -S rad2deg_reorderloads.ll isqrt_reorderloads.ll cubic_reorderloads.ll basicmath_large_reorderloads.ll -o basicmath_large_reorderloads_o.ll
+# 	$(LLC) $(LLC_FLAGS)  -o basicmath_large_reorderloads_o.o basicmath_large_reorderloads_o.ll;
+# 	$(RISCV_COMPILER) $(RISCV_FLAGS) basicmath_large_reorderloads_o.o -I /opt/riscv/sysroot/usr/include/ -o basicmath_large_reorderloads -lm;
 
 clean:
 	rm -rf basicmath_small basicmath_large output*
