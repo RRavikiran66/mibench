@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
   }
   __asm volatile("xor x0,x0,x0");
   /* finds 10 shortest paths between nodes */
-  #pragma clang loop unroll (enable)
+// here->  #pragma clang loop unroll (enable)
   for (i=0,j=NUM_NODES/2;i<20;i++,j++) {
 			j=j%NUM_NODES;
       dijkstra(i,j);

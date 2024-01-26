@@ -76,13 +76,13 @@ int main(void)
   // printf("\n");
 
   /* Now solve some random equations */
-  #pragma clang loop unroll (enable)
+// here->  #pragma clang loop unroll (enable)
   for(a1=1;a1<10;a1+=1) {
-    #pragma clang loop unroll (enable)
+// here->    #pragma clang loop unroll (enable)
     for(b1=10;b1>0;b1-=.25) {
-      #pragma clang loop unroll (enable)
+// here->      #pragma clang loop unroll (enable)
       for(c1=5;c1<15;c1+=0.61) {
-    #pragma clang loop unroll (enable)
+// here->    #pragma clang loop unroll (enable)
 	   for(d1=-1;d1>-5;d1-=.451) {
 		SolveCubic(a1, b1, c1, d1, &solutions, x);  
 		// printf("Solutions:");

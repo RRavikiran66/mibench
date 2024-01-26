@@ -179,7 +179,7 @@ main(int argc, char *argv[])
       register errors = 0;
       __asm volatile("xor x0,x0,x0");
       //printf("ENTERING ROI");
-      #pragma clang loop unroll (enable)
+// here->      #pragma clang loop unroll (enable)
       while(--argc > 0)
       {
             errors |= crc32file(*++argv, &crc, &charcnt);

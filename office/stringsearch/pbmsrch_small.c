@@ -148,7 +148,7 @@ main()
 };
       int i;
 	  __asm volatile("xor x0,x0,x0");
-	  #pragma clang loop unroll (enable)
+// here->	  #pragma clang loop unroll (enable)
       for (i = 0; find_strings[i]; i++)
       {
             init_search(find_strings[i]);			

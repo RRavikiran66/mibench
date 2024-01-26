@@ -753,7 +753,7 @@ TOTAL_TYPE total;
       //#pragma clang loop unroll(full)
       for(y=-mask_size; y<=mask_size; y++)
       {
-        #pragma clang loop unroll (enable)
+// here->        #pragma clang loop unroll (enable)
         for(x=-mask_size; x<=mask_size; x++)
 	      {
           brightness = *ip++;
